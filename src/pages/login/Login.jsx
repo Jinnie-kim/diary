@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { useLogin } from '../../hooks/useLogin';
 import styles from './Login.module.css';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { error, isPending, login } = useLogin();
 
   const userDataHandler = (event) => {
     if (event.target.type === 'email') {
@@ -15,7 +17,7 @@ export default function Login() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(email, password);
+    login(email, password);
   };
 
   return (
@@ -38,9 +40,16 @@ export default function Login() {
           required
           onChange={userDataHandler}
         />
-        <button type="submit" className={styles.button}>
-          LOGIN
-        </button>
+
+        {!isPending && (
+          <button type="submit" className={styles.button}>
+            LOGIN
+          </button>
+        )}
+        {isPending && (
+          <strong className={styles.alert_message}>wait a second ... 😗</strong>
+        )}
+        {error && <storng className={styles.alert_message}>{error}</storng>}
       </fieldset>
     </form>
   );

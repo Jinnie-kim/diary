@@ -35,3 +35,15 @@
   font-weight: 700;
   cursor: pointer;
 }
+
+.alert_message {
+  display: block;
+  margin-top: 40px;
+  float: right;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background-color: #7912fe;
+  border: 1px solid #7912fe;
+  color: #f3b916;
+  font-weight: 700;
+}
