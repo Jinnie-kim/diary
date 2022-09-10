@@ -1,6 +1,6 @@
 import { useReducer } from 'react';
-import { collection } from 'firebase/firestore';
-import { appFireStore } from '../firebase/config';
+import { collection, addDoc } from 'firebase/firestore';
+import { appFireStore, timeStamp } from '../firebase/config';
 
 const initState = {
   document: null, // 데이터를 객체의 형태로 저장하는 공간
@@ -11,6 +11,22 @@ const initState = {
 
 const storeReducer = (state, action) => {
   switch (action.type) {
+    case 'isPending':
+      return { isPending: true, document: null, success: false, error: null };
+    case 'addDoc':
+      return {
+        isPending: false,
+        document: action.payload,
+        success: true,
+        error: null,
+      };
+    case 'error':
+      return {
+        isPending: false,
+        document: null,
+        success: false,
+        error: action.payload,
+      };
     default:
       return state;
   }
@@ -24,7 +40,17 @@ export const useFireStore = (transaction) => {
   const colRef = collection(appFireStore, transaction);
 
   // 컬렉션에 문서를 추가
-  const addDocument = () => {};
+  const addDocument = async (doc) => {
+    dispatch({ type: 'isPending' });
+    try {
+      const createdTime = timeStamp.fromDate(new Date());
+      const docRef = await addDoc(colRef, { ...doc, createdTime });
+      console.log(docRef);
+      dispatch({ type: 'addDoc', payload: docRef });
+    } catch (error) {
+      dispatch({ type: 'error', payload: error.message });
+    }
+  };
 
   // 컬렉션에서 문서를 제거
   const deleteDocument = (id) => {};
