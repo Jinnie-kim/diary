@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useFireStore } from '../../hooks/useFireStore';
 
-export default function DiaryForm() {
+export default function DiaryForm({ uid }) {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const { addDocument, response } = useFireStore('diary');
 
   const diaryDataHandler = (event) => {
     if (event.target.id === 'title') {
@@ -15,7 +17,7 @@ export default function DiaryForm() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(title, content);
+    addDocument({ uid, title, content });
   };
   return (
     <>

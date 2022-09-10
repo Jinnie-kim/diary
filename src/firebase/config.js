@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, Timestamp } from 'firebase/firestore';
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -15,5 +15,5 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const appAuth = getAuth(); // 인증을 초기화하는 과정
 const appFireStore = getFirestore(app); // 파이어스토어 초기화
-
-export { appAuth, appFireStore };
+const timeStamp = Timestamp;
+export { appAuth, appFireStore, timeStamp };
