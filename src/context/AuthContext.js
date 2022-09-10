@@ -1,4 +1,6 @@
-import { createContext, useReducer } from 'react';
+import { createContext, useEffect, useReducer } from 'react';
+import { appAuth } from '../firebase/config';
+import { onAuthStateChanged } from 'firebase/auth';
 
 // context 객체를 생성
 const AuthContext = createContext();
@@ -9,6 +11,8 @@ const authReducer = (state, action) => {
       return { ...state, user: action.payload };
     case 'logout':
       return { ...state, user: null };
+    case 'isAuthReady':
+      return { ...state, user: action.payload, isAuthReady: true };
     default:
       return state;
   }
@@ -18,7 +22,16 @@ const authReducer = (state, action) => {
 const AuthContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, {
     user: null,
+    isAuthReady: false,
   });
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(appAuth, (user) => {
+      dispatch({ type: 'isAuthReady', payload: user });
+    });
+    return unsubscribe; // clean up 함수
+  }, []);
+
   console.log('user state : ', state);
   return (
     <AuthContext.Provider value={{ ...state, dispatch }}>
