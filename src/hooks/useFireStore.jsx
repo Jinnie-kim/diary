@@ -1,5 +1,5 @@
 import { useReducer } from 'react';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, deleteDoc, doc } from 'firebase/firestore';
 import { appFireStore, timeStamp } from '../firebase/config';
 
 const initState = {
@@ -10,6 +10,7 @@ const initState = {
 };
 
 const storeReducer = (state, action) => {
+  // 케이스마다 변경되는 데이터들이 많아서 전개 구문으로 작성하지 않는다.
   switch (action.type) {
     case 'isPending':
       return { isPending: true, document: null, success: false, error: null };
@@ -26,6 +27,13 @@ const storeReducer = (state, action) => {
         document: null,
         success: false,
         error: action.payload,
+      };
+    case 'deleteDoc':
+      return {
+        isPending: false,
+        document: action.payload,
+        success: true,
+        error: null,
       };
     default:
       return state;
@@ -45,7 +53,6 @@ export const useFireStore = (transaction) => {
     try {
       const createdTime = timeStamp.fromDate(new Date());
       const docRef = await addDoc(colRef, { ...doc, createdTime });
-      console.log(docRef);
       dispatch({ type: 'addDoc', payload: docRef });
     } catch (error) {
       dispatch({ type: 'error', payload: error.message });
@@ -53,7 +60,15 @@ export const useFireStore = (transaction) => {
   };
 
   // 컬렉션에서 문서를 제거
-  const deleteDocument = (id) => {};
+  const deleteDocument = async (id) => {
+    dispatch({ type: 'isPending' });
+    try {
+      const docRef = await deleteDoc(doc(colRef, id));
+      dispatch({ type: 'deleteDoc', payload: docRef });
+    } catch (error) {
+      dispatch({ type: 'error', payload: error.message });
+    }
+  };
 
   return { addDocument, deleteDocument, response };
 };
