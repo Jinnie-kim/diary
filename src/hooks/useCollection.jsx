@@ -1,5 +1,11 @@
 import { useState, useEffect } from 'react';
-import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import {
+  collection,
+  onSnapshot,
+  orderBy,
+  query,
+  where,
+} from 'firebase/firestore';
 import { appFireStore } from '../firebase/config';
 
 export const useCollection = (transaction, myQuery) => {
@@ -9,7 +15,11 @@ export const useCollection = (transaction, myQuery) => {
   useEffect(() => {
     let q;
     if (myQuery) {
-      q = query(collection(appFireStore, transaction), where(...myQuery));
+      q = query(
+        collection(appFireStore, transaction),
+        where(...myQuery),
+        orderBy('createdTime', 'desc')
+      );
     }
     const unsubscrieb = onSnapshot(
       myQuery ? q : collection(appFireStore, transaction),
