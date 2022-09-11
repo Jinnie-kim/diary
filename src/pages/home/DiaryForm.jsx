@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useState } from 'react';
 import { useFireStore } from '../../hooks/useFireStore';
 
@@ -15,6 +16,13 @@ export default function DiaryForm({ uid }) {
     }
   };
 
+  useEffect(() => {
+    if (response.success) {
+      setTitle('');
+      setContent('');
+    }
+  }, [response.success]);
+
   const handleSubmit = (event) => {
     event.preventDefault();
     addDocument({ uid, title, content });
@@ -25,10 +33,10 @@ export default function DiaryForm({ uid }) {
         <fieldset>
           <legend>Record your day</legend>
           <label htmlFor="title">Title : </label>
-          <input id="title" type="text" required onChange={diaryDataHandler} />
+          <input id="title" type="text" value={title} required onChange={diaryDataHandler} />
 
           <label htmlFor="content">Content : </label>
-          <textarea id="content" onChange={diaryDataHandler}></textarea>
+          <textarea id="content" value={content} required onChange={diaryDataHandler}></textarea>
 
           <button type="submit">DONE</button>
         </fieldset>
