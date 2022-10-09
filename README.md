@@ -9,6 +9,8 @@
 ## 설치 및 실행
 
 
+### 배포 url: https://my-diary-f4eaa.web.app/
+
 ```shell
 npm install
 
